@@ -1,11 +1,11 @@
 package com.meysamzamani.employee.services;
 
 import com.meysamzamani.employee.domain.Employee;
+import com.meysamzamani.employee.dto.EmployeeUpdateDTO;
 import com.meysamzamani.employee.exceptions.NotFoundException;
 import com.meysamzamani.employee.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -25,44 +25,65 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(Employee employee) {
-        Optional<Employee> employeeOptional = employeeRepository.findEmployeeByEmail(employee.getEmail());
+        Optional<Employee> employeeOptional = employeeRepository.findEmployeeByEmailIgnoreCase(employee.getEmail());
         if (employeeOptional.isPresent()) {
-            throw new IllegalStateException("email taken");
-        }
-        if (hasDuplicateHobbies(employee.getHobbies())) {
-            throw new IllegalArgumentException("Duplicate hobbies are not allowed.");
+            throw new IllegalStateException("Email " + employee.getEmail() + " is already associated with another employee.");
         }
         return employeeRepository.save(employee);
     }
 
     public void deleteEmployee(UUID employeeId) {
         boolean exists = employeeRepository.existsById(employeeId);
-        if (!exists) {
-            throw new NotFoundException("Employee with UUID " + employeeId.toString() + " does not exist");
+        if (exists) {
+            employeeRepository.deleteById(employeeId);
+            return;
         }
-        employeeRepository.deleteById(employeeId);
+        throw new NotFoundException("Employee with ID " + employeeId + " not found.");
     }
 
-    @Transactional
-    public void updateEmployee(UUID employeeId, String firstName, String lastName, String email, String birthDate) {
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(() -> new NotFoundException("Employee with ID " + employeeId.toString() + " does not exist"));
-        if (firstName != null && !firstName.isEmpty() && !Objects.equals(employee.getFirstName(), firstName)) {
-            employee.setFirstName(firstName);
-        }
-        if (lastName != null && !lastName.isEmpty() && !Objects.equals(employee.getLastName(), lastName)) {
-            employee.setLastName(lastName);
-        }
-        if (email != null && !email.isEmpty() && !Objects.equals(employee.getEmail(), email)) {
-            Optional<Employee> employeeOptional = employeeRepository.findEmployeeByEmail(employee.getEmail());
-            if (employeeOptional.isPresent()) {
-                throw new IllegalStateException("email taken");
+    public Employee updateEmployee(UUID employeeId, EmployeeUpdateDTO employeeUpdateDTO) {
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+
+        if (employee.isPresent()) {
+
+            if (employeeUpdateDTO.getEmail() != null) {
+
+                Optional<Employee> employeeByEmail = employeeRepository.findEmployeeByEmailIgnoreCase(employeeUpdateDTO.getEmail());
+                if (employeeByEmail.isPresent() && !employeeByEmail.get().getId().equals(employeeId)) {
+                    throw new IllegalStateException("Email " + employeeUpdateDTO.getEmail() + " is already associated with another employee.");
+                }
+                employee.get().setEmail(employeeUpdateDTO.getEmail());
             }
-            employee.setEmail(email);
+
+            if (employeeUpdateDTO.getFirstName() != null) {
+                employee.get().setFirstName(employeeUpdateDTO.getFirstName());
+            }
+
+            if (employeeUpdateDTO.getLastName() != null) {
+                employee.get().setLastName(employeeUpdateDTO.getLastName());
+            }
+
+            if (employeeUpdateDTO.getBirthDate() != null) {
+                employee.get().setBirthDate(employeeUpdateDTO.getBirthDate());
+            }
+
+            if (employeeUpdateDTO.getHobbies() != null) {
+                employee.get().setHobbies(employeeUpdateDTO.getHobbies());
+            }
+
+            return employeeRepository.save(employee.get());
         }
+
+        throw new NotFoundException("Employee with ID " + employeeId + " not found.");
+
     }
 
-    private boolean hasDuplicateHobbies(List<String> hobbies) {
-        Set<String> uniqueHobbies = new HashSet<>(hobbies);
-        return uniqueHobbies.size() < hobbies.size();
+    public Employee getEmployee(UUID employeeId) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isPresent()) {
+            return employeeOptional.get();
+        }
+        throw new NotFoundException("Employee with ID " + employeeId + " not found.");
     }
+
 }

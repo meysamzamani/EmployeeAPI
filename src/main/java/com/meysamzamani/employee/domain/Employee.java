@@ -1,7 +1,12 @@
 package com.meysamzamani.employee.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.meysamzamani.employee.validation.HobbyListNotDuplicateAndEmpty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -10,16 +15,20 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "employees")
+@Table
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true)
+    @Email
+    @NotBlank
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Past
+    @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
@@ -27,12 +36,21 @@ public class Employee {
     @Transient
     private int age;
 
+    @NotBlank
+    @Column(nullable = false)
     private String firstName;
 
+    @NotBlank
+    @Column(nullable = false)
     private String lastName;
 
+    @Transient
+    private String fullName;
+
+    @HobbyListNotDuplicateAndEmpty
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @ElementCollection
-    @CollectionTable(name = "hobbies", joinColumns = @JoinColumn(name = "employee_id"))
+    @CollectionTable(name = "hobbies")
     @Column(name = "hobby")
     private List<String> hobbies;
 
@@ -41,16 +59,6 @@ public class Employee {
     public Employee(String email, LocalDate birthDate, String firstName, String lastName, List<String> hobbies) {
         this.email = email;
         this.birthDate = birthDate;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.hobbies = hobbies;
-    }
-
-    public Employee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, List<String> hobbies) {
-        this.id = id;
-        this.email = email;
-        this.birthDate = birthDate;
-        this.age = age;
         this.firstName = firstName;
         this.lastName = lastName;
         this.hobbies = hobbies;
@@ -98,6 +106,10 @@ public class Employee {
 
     public List<String> getHobbies() {
         return hobbies;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 
     public int getAge() {

@@ -1,14 +1,16 @@
 package com.meysamzamani.employee.api;
 
-import com.meysamzamani.employee.dto.EmployeeDTO;
+import com.meysamzamani.employee.domain.Employee;
+import com.meysamzamani.employee.dto.EmployeeUpdateDTO;
 import com.meysamzamani.employee.services.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1.0/employee")
@@ -20,33 +22,40 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<EmployeeDTO> getEmployees() {
-        return employeeService.getEmployees().stream()
-                .map(EmployeeDTO::convertToDTO)
-                .collect(Collectors.toList());
+    public List<Employee> getEmployees() {
+        return employeeService.getEmployees();
     }
 
-    @PostMapping
+    @GetMapping(path = "{employeeId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Employee getEmployee(@PathVariable("employeeId") UUID employeeId) {
+        return employeeService.getEmployee(employeeId);
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public EmployeeDTO registerNewEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        return EmployeeDTO.convertToDTO(employeeService.createEmployee(EmployeeDTO.convertToEntity(employeeDTO)));
+    public Employee registerNewEmployee(@Valid @RequestBody Employee employee) {
+        return employeeService.createEmployee(employee);
     }
 
-    @DeleteMapping(path = "{employeeID}")
-    public void deleteEmployee(@PathVariable("employeeID") UUID employeeId) {
+    @DeleteMapping(path = "{employeeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEmployee(@PathVariable("employeeId") UUID employeeId) {
         employeeService.deleteEmployee(employeeId);
     }
 
-    @PutMapping(path = "{employeeID}")
-    public void updateEmployee(@PathVariable("employeeID") UUID employeeId,
-                              @RequestParam(required = false) String firstName,
-                              @RequestParam(required = false) String lastName,
-                              @RequestParam(required = false) String email,
-                              @RequestParam(required = false) String birthDate) {
-        employeeService.updateEmployee(employeeId, firstName, lastName, email, birthDate);
+    @PutMapping(path = "{employeeId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public Employee updateEmployee(@PathVariable("employeeId") UUID employeeId,
+                               @Valid @RequestBody EmployeeUpdateDTO employeeDTO) {
+        return employeeService.updateEmployee(employeeId, employeeDTO);
     }
 }
