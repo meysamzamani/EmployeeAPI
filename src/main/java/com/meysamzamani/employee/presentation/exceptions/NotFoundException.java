@@ -1,4 +1,4 @@
-package com.meysamzamani.employee.exceptions;
+package com.meysamzamani.employee.presentation.exceptions;
 
 public class NotFoundException extends RuntimeException {
 

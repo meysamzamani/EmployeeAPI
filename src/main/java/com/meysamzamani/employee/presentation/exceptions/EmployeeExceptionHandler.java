@@ -1,6 +1,6 @@
-package com.meysamzamani.employee.exceptions;
+package com.meysamzamani.employee.presentation.exceptions;
 
-import com.meysamzamani.employee.dto.ErrorResponseDTO;
+import com.meysamzamani.employee.presentation.dto.ErrorResponseDTO;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.meysamzamani.employee.dto;
+package com.meysamzamani.employee.presentation.dto;
 
 import org.springframework.http.HttpStatus;
 

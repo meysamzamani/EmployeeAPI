@@ -1,8 +1,8 @@
-package com.meysamzamani.employee.api;
+package com.meysamzamani.employee.presentation.controller;
 
 import com.meysamzamani.employee.domain.Employee;
-import com.meysamzamani.employee.dto.EmployeeUpdateDTO;
-import com.meysamzamani.employee.services.EmployeeService;
+import com.meysamzamani.employee.presentation.dto.EmployeeUpdateDTO;
+import com.meysamzamani.employee.application.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

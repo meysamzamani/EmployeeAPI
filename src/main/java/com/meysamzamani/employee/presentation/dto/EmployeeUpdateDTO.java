@@ -1,7 +1,7 @@
-package com.meysamzamani.employee.dto;
+package com.meysamzamani.employee.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.meysamzamani.employee.validation.HobbyListNotDuplicateAndEmpty;
+import com.meysamzamani.employee.presentation.validation.HobbyListNotDuplicateAndEmpty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Past;
 import org.springframework.format.annotation.DateTimeFormat;

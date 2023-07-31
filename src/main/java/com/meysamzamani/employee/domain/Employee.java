@@ -2,7 +2,7 @@ package com.meysamzamani.employee.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.meysamzamani.employee.validation.HobbyListNotDuplicateAndEmpty;
+import com.meysamzamani.employee.presentation.validation.HobbyListNotDuplicateAndEmpty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -61,6 +61,17 @@ public class Employee {
         this.birthDate = birthDate;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.hobbies = hobbies;
+    }
+
+    public Employee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, String fullName, List<String> hobbies) {
+        this.id = id;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.age = age;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.fullName = fullName;
         this.hobbies = hobbies;
     }
 

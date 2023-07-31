@@ -1,4 +1,4 @@
-package com.meysamzamani.employee.repositories;
+package com.meysamzamani.employee.infrastructure.persistence;
 
 import com.meysamzamani.employee.domain.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;

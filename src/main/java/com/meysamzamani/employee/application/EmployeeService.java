@@ -1,9 +1,12 @@
-package com.meysamzamani.employee.services;
+package com.meysamzamani.employee.application;
 
 import com.meysamzamani.employee.domain.Employee;
-import com.meysamzamani.employee.dto.EmployeeUpdateDTO;
-import com.meysamzamani.employee.exceptions.NotFoundException;
-import com.meysamzamani.employee.repositories.EmployeeRepository;
+import com.meysamzamani.employee.infrastructure.kafka.EmployeeEvent;
+import com.meysamzamani.employee.presentation.dto.EmployeeUpdateDTO;
+import com.meysamzamani.employee.infrastructure.kafka.EventType;
+import com.meysamzamani.employee.presentation.exceptions.NotFoundException;
+import com.meysamzamani.employee.infrastructure.kafka.KafkaEmployeeProducer;
+import com.meysamzamani.employee.infrastructure.persistence.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +17,12 @@ import java.util.*;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-
+    private final KafkaEmployeeProducer kafkaEmployeeProducer;
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository,
+                           KafkaEmployeeProducer employeeProducer) {
         this.employeeRepository = employeeRepository;
+        this.kafkaEmployeeProducer = employeeProducer;
     }
 
     public List<Employee> getEmployees() {
@@ -29,13 +34,19 @@ public class EmployeeService {
         if (employeeOptional.isPresent()) {
             throw new IllegalStateException("Email " + employee.getEmail() + " is already associated with another employee.");
         }
-        return employeeRepository.save(employee);
+
+        Employee registeredEmployee = employeeRepository.save(employee);
+        EmployeeEvent employeeEvent = new EmployeeEvent(EventType.CREATE, registeredEmployee);
+        kafkaEmployeeProducer.produceEmployee(employeeEvent);
+        return registeredEmployee;
     }
 
     public void deleteEmployee(UUID employeeId) {
-        boolean exists = employeeRepository.existsById(employeeId);
-        if (exists) {
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+        if (employee.isPresent()) {
+            EmployeeEvent employeeEvent = new EmployeeEvent(EventType.DELETE, employee.get());
             employeeRepository.deleteById(employeeId);
+            kafkaEmployeeProducer.produceEmployee(employeeEvent);
             return;
         }
         throw new NotFoundException("Employee with ID " + employeeId + " not found.");
@@ -45,6 +56,7 @@ public class EmployeeService {
         Optional<Employee> employee = employeeRepository.findById(employeeId);
 
         if (employee.isPresent()) {
+            Employee existEmployee = employee.get();
 
             if (employeeUpdateDTO.getEmail() != null) {
 
@@ -52,26 +64,29 @@ public class EmployeeService {
                 if (employeeByEmail.isPresent() && !employeeByEmail.get().getId().equals(employeeId)) {
                     throw new IllegalStateException("Email " + employeeUpdateDTO.getEmail() + " is already associated with another employee.");
                 }
-                employee.get().setEmail(employeeUpdateDTO.getEmail());
+                existEmployee.setEmail(employeeUpdateDTO.getEmail());
             }
 
             if (employeeUpdateDTO.getFirstName() != null) {
-                employee.get().setFirstName(employeeUpdateDTO.getFirstName());
+                existEmployee.setFirstName(employeeUpdateDTO.getFirstName());
             }
 
             if (employeeUpdateDTO.getLastName() != null) {
-                employee.get().setLastName(employeeUpdateDTO.getLastName());
+                existEmployee.setLastName(employeeUpdateDTO.getLastName());
             }
 
             if (employeeUpdateDTO.getBirthDate() != null) {
-                employee.get().setBirthDate(employeeUpdateDTO.getBirthDate());
+                existEmployee.setBirthDate(employeeUpdateDTO.getBirthDate());
             }
 
             if (employeeUpdateDTO.getHobbies() != null) {
-                employee.get().setHobbies(employeeUpdateDTO.getHobbies());
+                existEmployee.setHobbies(employeeUpdateDTO.getHobbies());
             }
 
-            return employeeRepository.save(employee.get());
+            Employee updatedEmployee =  employeeRepository.save(existEmployee);
+            EmployeeEvent employeeEvent = new EmployeeEvent(EventType.UPDATE, updatedEmployee);
+            kafkaEmployeeProducer.produceEmployee(employeeEvent);
+            return updatedEmployee;
         }
 
         throw new NotFoundException("Employee with ID " + employeeId + " not found.");

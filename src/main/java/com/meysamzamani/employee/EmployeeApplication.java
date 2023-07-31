@@ -1,4 +1,4 @@
-package com.meysamzamani;
+package com.meysamzamani.employee;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
