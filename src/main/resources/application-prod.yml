@@ -22,3 +22,7 @@ server:
     enabled: true
   error:
     include-message: always
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
