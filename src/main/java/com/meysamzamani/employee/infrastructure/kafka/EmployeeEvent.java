@@ -11,7 +11,9 @@ public class EmployeeEvent {
 
     public EmployeeEvent(EventType eventType, Employee employee) {
         this.eventType = eventType;
-        employee.setHobbies(new ArrayList<>(employee.getHobbies()));
+        if (employee.getHobbies() != null) {
+            employee.setHobbies(new ArrayList<>(employee.getHobbies()));
+        }
         this.employee = employee;
     }
 
