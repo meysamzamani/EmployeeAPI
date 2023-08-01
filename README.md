@@ -64,6 +64,17 @@ The project follows the Domain-Driven Design (DDD) principles and is structured 
 
     Once the Docker Compose environment is up and running, you can access the RESTful APIs of the Spring Boot application at [This URL](http://localhost:8080).
 
+# Database Configuration
+
+The application uses Hibernate as the ORM (Object-Relational Mapping) tool to interact with the database. The hibernate.ddl-auto property is a configuration option that controls the database schema generation strategy during application startup.
+
+### hibernate.ddl-auto: create-drop
+- The hibernate.ddl-auto property is set to create-drop in the application's configuration.
+With create-drop, Hibernate will automatically create the necessary database schema when the application starts up, and it will drop the schema when the application shuts down. If you want to keep data in database after every project run please change this value to update like example: 
+
+        hibernate:
+            ddl-auto: update
+
 # APIs Documentation (Swagger)
 
 The application exposes its RESTful APIs using Swagger. Once the application is running, you can access the Swagger UI to explore and interact with the APIs at the following URL:
