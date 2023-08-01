@@ -25,6 +25,15 @@ The project follows the Domain-Driven Design (DDD) principles and is structured 
         - validation
     - resources 
 - test
+  - java
+    - com.meysamzamani.employee
+      - application
+      - domain
+      - infrastructure
+        - kafka
+        - persistence
+      - presentation
+        - controller
 
 # How to Build and Run
 
@@ -66,4 +75,13 @@ The application exposes its RESTful APIs using Swagger. Once the application is 
 The application uses Kafka to publish events related to employee creation, update, and deletion. Kafka configuration and integration are handled in the KafkaConfiguration class and the Kafka-related components in the infrastructure.kafka package.
 
 Kafka topics are created automatically when events are published for the first time.
+
+# Unit Tests and Integration Test
+
+The project includes unit tests for the core business logic, service layer, and domain entities. The unit tests are implemented using JUnit 5 and Mockito to isolate components and mock external dependencies. Integration tests are provided to ensure that the application's components work correctly together and interact with external dependencies, such as the database and Kafka. Integration tests are implemented using JUnit 5 and Testcontainers to set up a temporary Kafka container for testing. To run the tests, use the following command:
+
+    mvn test
+
+# Author
+Meysam Zamani
 

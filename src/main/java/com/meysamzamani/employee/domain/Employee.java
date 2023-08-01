@@ -99,6 +99,10 @@ public class Employee {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -125,5 +129,19 @@ public class Employee {
 
     public int getAge() {
         return Period.between(this.birthDate, LocalDate.now()).getYears();
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", birthDate=" + birthDate +
+                ", age=" + age + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", hobbies=" + hobbies +
+                '}';
     }
 }
