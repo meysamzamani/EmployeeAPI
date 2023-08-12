@@ -38,12 +38,13 @@ class KafkaEmployeeProducerTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee employee = new Employee("test@yahoo.com",
+        Employee employee = new Employee(employeeId,"test@yahoo.com",
                 LocalDate.of(1987,5,23),
+                0,
                 "myTestName",
                 "myTestFamily",
+                "",
                 hobbies);
-        employee.setId(employeeId);
 
         EmployeeEvent employeeEvent = new EmployeeEvent(EventType.CREATE, employee);
 

@@ -81,12 +81,14 @@ public class EmployeeServiceTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee employee = new Employee("test@yahoo.com",
+        Employee employee = new Employee(employeeId,
+               "test@yahoo.com",
                 LocalDate.of(1987,5,23),
+                0,
                 "myTestName",
                 "myTestFamily",
+                "",
                 hobbies);
-        employee.setId(employeeId);
 
         when(employeeRepository.findById(any(UUID.class))).thenReturn(Optional.of(employee));
 
@@ -116,12 +118,14 @@ public class EmployeeServiceTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee existingEmployee = new Employee("test@yahoo.com",
+        Employee existingEmployee = new Employee(employeeId,
+                "test@yahoo.com",
                 LocalDate.of(1987,5,23),
+                0,
                 "myTestName",
                 "myTestFamily",
+                "",
                 hobbies);
-        existingEmployee.setId(employeeId);
 
         when(employeeRepository.findById(eq(employeeId))).thenReturn(Optional.of(existingEmployee));
         when(employeeRepository.findEmployeeByEmailIgnoreCase(anyString())).thenReturn(Optional.empty());
@@ -158,8 +162,17 @@ public class EmployeeServiceTest {
     @Test
     void whenGetEmployee_thenVerifyFindById() {
         UUID employeeId = UUID.randomUUID();
-        Employee employee = new Employee();
-        employee.setId(employeeId);
+        List<String> hobbies = new ArrayList<>();
+        hobbies.add("film");
+        hobbies.add("photography");
+        Employee employee = new Employee(employeeId,
+                "test@yahoo.com",
+                LocalDate.of(1987,5,23),
+                0,
+                "myTestName",
+                "myTestFamily",
+                "",
+                hobbies);
 
         when(employeeRepository.findById(any(UUID.class))).thenReturn(Optional.of(employee));
 

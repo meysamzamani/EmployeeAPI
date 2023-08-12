@@ -28,14 +28,12 @@ public class EmployeeTest {
         LocalDate birthDate = LocalDate.of(1987,5,20);
         String[] hobbies = {"Soccer", "Music"};
 
-        employee.setId(id);
         employee.setEmail(email);
         employee.setFirstName(firstName);
         employee.setLastName(lastName);
         employee.setBirthDate(birthDate);
         employee.setHobbies(Arrays.asList(hobbies));
 
-        assertEquals(id, employee.getId());
         assertEquals(email, employee.getEmail());
         assertEquals(firstName, employee.getFirstName());
         assertEquals(lastName, employee.getLastName());
