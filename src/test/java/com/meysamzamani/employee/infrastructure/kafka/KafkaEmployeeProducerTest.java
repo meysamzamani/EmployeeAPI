@@ -34,11 +34,12 @@ class KafkaEmployeeProducerTest {
 
     @Test
     public void whenProduceEmployee_thenShouldVerifyTopicAndEvent() {
+
         UUID employeeId = UUID.randomUUID();
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee employee = new Employee(employeeId,"test@yahoo.com",
+        TestEmployee employee = new TestEmployee(employeeId,"test@yahoo.com",
                 LocalDate.of(1987,5,23),
                 0,
                 "myTestName",
@@ -51,5 +52,11 @@ class KafkaEmployeeProducerTest {
         kafkaEmployeeProducer.produceEmployee(employeeEvent);
 
         verify(kafkaTemplate, times(1)).send(eq(topic), eq(employeeEvent));
+    }
+
+    private static class TestEmployee extends Employee {
+        public TestEmployee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, String fullName, List<String> hobbies) {
+            super(id, email, birthDate, age, firstName, lastName, fullName, hobbies);
+        }
     }
 }

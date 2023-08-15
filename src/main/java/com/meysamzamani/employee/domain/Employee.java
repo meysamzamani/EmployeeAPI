@@ -64,7 +64,7 @@ public class Employee {
         this.hobbies = hobbies;
     }
 
-    public Employee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, String fullName, List<String> hobbies) {
+    protected Employee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, String fullName, List<String> hobbies) {
         this.id = id;
         this.email = email;
         this.birthDate = birthDate;

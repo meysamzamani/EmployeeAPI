@@ -81,7 +81,7 @@ public class EmployeeServiceTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee employee = new Employee(employeeId,
+        TestEmployee employee = new TestEmployee(employeeId,
                "test@yahoo.com",
                 LocalDate.of(1987,5,23),
                 0,
@@ -118,7 +118,7 @@ public class EmployeeServiceTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee existingEmployee = new Employee(employeeId,
+        TestEmployee existingEmployee = new TestEmployee(employeeId,
                 "test@yahoo.com",
                 LocalDate.of(1987,5,23),
                 0,
@@ -165,7 +165,7 @@ public class EmployeeServiceTest {
         List<String> hobbies = new ArrayList<>();
         hobbies.add("film");
         hobbies.add("photography");
-        Employee employee = new Employee(employeeId,
+        TestEmployee employee = new TestEmployee(employeeId,
                 "test@yahoo.com",
                 LocalDate.of(1987,5,23),
                 0,
@@ -193,6 +193,12 @@ public class EmployeeServiceTest {
         assertThrows(NotFoundException.class, () -> employeeService.getEmployee(employeeId));
 
         verify(employeeRepository, times(1)).findById(employeeId);
+    }
+
+    private static class TestEmployee extends Employee {
+        public TestEmployee(UUID id, String email, LocalDate birthDate, int age, String firstName, String lastName, String fullName, List<String> hobbies) {
+            super(id, email, birthDate, age, firstName, lastName, fullName, hobbies);
+        }
     }
 
 }
